@@ -1,0 +1,29 @@
+# CopadoCon 2025 Hackathon
+# Latest versions with Python 3.13 support
+
+# Core web framework (latest versions)
+fastapi>=0.115.0
+uvicorn>=0.32.0
+pydantic>=2.10.0
+pydantic-settings>=2.0.0
+
+# Integration dependencies
+simple-salesforce>=1.12.6
+PyGithub>=1.59.1
+jira>=3.5.0
+openai>=1.12.0
+slack-sdk>=3.26.0
+
+# System monitoring
+psutil>=5.9.0
+
+# Essential utilities
+python-dotenv==1.0.0
+requests==2.31.0
+jinja2==3.1.2
+
+# Basic file handling
+aiofiles>=23.2.0
+
+# Logging
+loguru>=0.7.0

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  observability-agent:
+    build: .
+    container_name: ai-observability-agent
+    ports:
+      - "8080:8080"
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=INFO
+      - DATABASE_URL=sqlite:///./observability.db
+      - REDIS_URL=redis://redis:6379
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - observability-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-observability-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - observability-network
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  observability-network:
+    driver: bridge

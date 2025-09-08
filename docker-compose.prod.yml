@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  observability-agent:
+    build: .
+    container_name: ai-observability-agent-prod
+    ports:
+      - "8080:8080"
+    environment:
+      - DEBUG=false
+      - LOG_LEVEL=INFO
+      - DATABASE_URL=sqlite:///./observability.db
+      - REDIS_URL=redis://redis:6379
+      - ENVIRONMENT=production
+    env_file:
+      - .env.production
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+    restart: unless-stopped
+    networks:
+      - observability-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-observability-redis-prod
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_prod:/data
+    restart: unless-stopped
+    networks:
+      - observability-network
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+volumes:
+  redis_data_prod:
+    driver: local
+
+networks:
+  observability-network:
+    driver: bridge
